@@ -1,4 +1,4 @@
-﻿namespace RallyDakar.Dominio.Entities
+﻿namespace RallyDakar.Domain.Entities
 {
   public class Piloto
   {

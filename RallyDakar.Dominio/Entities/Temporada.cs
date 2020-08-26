@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace RallyDakar.Dominio.Entities
+namespace RallyDakar.Domain.Entities
 {
   public class Temporada
   {

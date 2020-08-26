@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RallyDakar.Dominio.Entities
+namespace RallyDakar.Domain.Entities
 {
   public class Telemetria
   {

@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0 - Dominio", "0 - Dominio", "{EEFC4B57-91F2-4534-B3A8-CAFD92BB55B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RallyDakar.Dominio", "RallyDakar.Dominio\RallyDakar.Dominio.csproj", "{4B03F953-F587-4674-8510-82789E5BF7D7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RallyDakar.Domain", "RallyDakar.Dominio\RallyDakar.Domain.csproj", "{4B03F953-F587-4674-8510-82789E5BF7D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RallyDakar.Dominio.Testes", "RallyDakar.Dominio.Testes\RallyDakar.Dominio.Testes.csproj", "{5DBDA30F-416E-400E-BB86-4C7A59D3F3D7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RallyDakar.Domain.Testes", "RallyDakar.Dominio.Testes\RallyDakar.Domain.Testes.csproj", "{5DBDA30F-416E-400E-BB86-4C7A59D3F3D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

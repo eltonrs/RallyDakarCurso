@@ -1,6 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace RallyDakar.Dominio.Testes
+namespace RallyDakar.Domain.Testes
 {
   [TestClass]
   public class UnitTest1
