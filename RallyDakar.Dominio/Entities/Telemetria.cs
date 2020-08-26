@@ -19,5 +19,6 @@ namespace RallyDakar.Dominio.Entities
     public double AltitudeNivelMar { get; set; }
     public bool PedalAcelerador { get; set; }
     public bool PedalFreio { get; set; }
+    public bool FarolAltoLigado { get; set; }
   }
 }
