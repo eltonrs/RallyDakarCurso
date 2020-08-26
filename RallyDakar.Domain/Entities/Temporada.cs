@@ -15,5 +15,13 @@ namespace RallyDakar.Domain.Entities
 
     // Uma temporada, tem várias equipes...
     public ICollection<Equipe> Equipes { get; set; } // Collection tipada por "Equipe" (class)
+
+    // Comportamentos (métodos). Sem esses, as classes são chamadas de anêmicas.
+
+    public void AdicionarEquipe(Equipe equipe)
+    {
+      if ((equipe != null) && (!string.IsNullOrEmpty(equipe.Nome)) && (!string.IsNullOrEmpty(equipe.CodigoIdentificador)))
+        Equipes.Add(equipe);
+    }
   }
 }
