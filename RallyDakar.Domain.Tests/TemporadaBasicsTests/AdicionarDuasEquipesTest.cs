@@ -13,7 +13,6 @@ namespace RallyDakar.Domain.Tests.TemporadaBasicsTests
     Temporada temporada;
     Equipe equipe1;
     Equipe equipe2;
-    Equipe equipe3;
 
     [TestInitialize]
     public void Initialize()
@@ -43,7 +42,6 @@ namespace RallyDakar.Domain.Tests.TemporadaBasicsTests
 
       temporada.AdicionarEquipe(equipe1);
       temporada.AdicionarEquipe(equipe2);
-      temporada.AdicionarEquipe(equipe3);
     }
 
     [TestMethod]
