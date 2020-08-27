@@ -17,5 +17,12 @@ namespace RallyDakar.Domain.Entities
      * CUDIADO: Pode onerar a memória, pois, é se a tabela for muito grande, irá carregar tudo. Verificar a possibilidade de carregar colunas/linhas manualmente sobre demanda. */
     public virtual Temporada Temporada { get; set; }
     public ICollection<Piloto> PilotoID { get; set; }
+
+    // Comportamento
+
+    public bool ValidarPropriedades()
+    {
+      return (!string.IsNullOrEmpty(Nome));
+    }
   }
 }

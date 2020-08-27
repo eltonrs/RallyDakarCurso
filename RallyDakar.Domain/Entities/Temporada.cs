@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RallyDakar.Domain.Entities
 {
@@ -24,10 +25,23 @@ namespace RallyDakar.Domain.Entities
 
     // Comportamentos (métodos). Sem esses, as classes são chamadas de anêmicas.
 
+    private bool ValidarAdicionarEquipe(Equipe equipe)
+    {
+      if (equipe == null) // deve ser sempre a primeira validação
+        return false;
+
+      return ((!Equipes.Any(e => e.ID == equipe.ID)) && (equipe.ValidarPropriedades()));
+    }
+
     public void AdicionarEquipe(Equipe equipe)
     {
-      if ((equipe != null) && (!string.IsNullOrEmpty(equipe.Nome)))
+      if (ValidarAdicionarEquipe(equipe))
         Equipes.Add(equipe);
+    }
+
+    public Equipe GetByID(int ID)
+    {
+      return Equipes.FirstOrDefault(e => e.ID == ID); // < LINQ
     }
   }
 }
