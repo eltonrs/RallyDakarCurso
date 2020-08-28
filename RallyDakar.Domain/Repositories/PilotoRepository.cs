@@ -17,13 +17,13 @@ namespace RallyDakar.Domain.Repositories
       _rallyDakarDbContext = rallyDakarDbContext;
     }
 
-    public void AdicionarPiloto(Piloto piloto)
+    public void Adicionar(Piloto piloto)
     {
       _rallyDakarDbContext.Pilotos.Add(piloto); // nesse ponto, o EF gera os scripts de banco de dados para inserir os dados.
       _rallyDakarDbContext.SaveChanges(); // replica os dados para a base de dados.
     }
 
-    public IEnumerable<Piloto> GetAllPilotos()
+    public IEnumerable<Piloto> GetAll()
     {
       /* Leitura: o EF só faz a consulta no banco de dados, no caso, na tabela Pilotos, quando eu invoco algum método do objeto Pilotos (DbSet).
        * Nesse caso, o "ToList()" faz um SELECT simples
