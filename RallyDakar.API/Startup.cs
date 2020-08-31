@@ -44,9 +44,10 @@ namespace RallyDakar.API
        * Mecanismo interno de injeção de dependência.
        */
       services.AddDbContext<RallyDakarDbContext>(opt => opt.UseInMemoryDatabase("RallyDakarDB"), ServiceLifetime.Scoped, ServiceLifetime.Scoped);
-      
-      // adiconado automaticamente
-      services.AddControllers();
+
+      // adicionado automaticamente (em seguida, adicionar o "AddNewtonsoftJson()")...
+      services.AddControllers().AddNewtonsoftJson();
+      // se adicionar (services.AddNewtonsoftJson();) aqui embaixo, não dá certo, pq ele não é um serviço, é uma "extensão" feita para trabalhar com o controler.
 
       /* Leitura:
        * Registrar os mapeamentos entre as interfaces e os repositórios

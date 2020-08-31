@@ -7,8 +7,12 @@ namespace RallyDakar.Domain.Interfaces
 {
   public interface IPilotoRepository
   {
-    void Adicionar(Piloto piloto);
+    void Add(Piloto piloto);
     IEnumerable<Piloto> GetAll();
-    IEnumerable<Piloto> GetByID(int ID);
+    Piloto GetByID(int pilotoID);
+    bool ExistByID(int pilotoID);
+    void UpdateFull(Piloto piloto);
+    void UpdatePartial(Piloto piloto);
+    void Delete(Piloto piloto);
   }
 }

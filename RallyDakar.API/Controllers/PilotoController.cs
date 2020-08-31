@@ -37,7 +37,7 @@ namespace RallyDakar.API.Controllers
       //return Ok(_pilotoRepository.GetAll());
 
       // Teste 3: visualizando o conteúdo (JSON) da listagem de pilotos no Postaman
-      List<Piloto> pilotos = new List<Piloto>();
+      /*List<Piloto> pilotos = new List<Piloto>();
 
       var piloto = new Piloto()
       {
@@ -53,38 +53,170 @@ namespace RallyDakar.API.Controllers
       };
       pilotos.Add(piloto);
 
-      return Ok(pilotos); // indica o "Status Code" do HTTP (OK = 200).
+      return Ok(pilotos); // indica o "Status Code" do HTTP (OK = 200). */
+
+      // Teste 4: 404 (Not found)
+      /*var pilotos = _pilotoRepository.GetAll();
+      if (!pilotos.Any())
+        return NotFound();
+      */
+
+      // Teste 5: outros problemas (tratamento de erros)
+      try
+      {
+        var pilotos = _pilotoRepository.GetAll();
+        if (!pilotos.Any())
+          return StatusCode(StatusCodes.Status404NotFound, "Não existe pilotos cadastrados!");
+
+        //return Ok();
+        // mais elegante:
+        return StatusCode(StatusCodes.Status200OK, pilotos);
+      }
+      catch (Exception ex)
+      {
+        // Alternativa 1
+        // retornando a mensagem de erro (analisar se pode enviar a mensagem, talvez tratá-la. Retornar uma genérica, por exemplo, "Entrar em contato com o suporte").
+        // além disso, "logar" a mensagem, para futuramente fezer uma analisa (nesse pode ser a mensagem na integra).
+        //return BadRequest(ex.ToString());
+
+        // Alternativa 2 (mais elegante)
+        return StatusCode(StatusCodes.Status500InternalServerError, "Erro. Entrar em contato com o suporte!!!");
+      }
+    }
+
+    /* Configurando a rota (para o Exemplo 2 do AddPiloto):
+     * 1 - Adicionar o parâmetro que foi utilizado
+     * 2 - Especificando o nome "personalizado" da rota (o mesmo passado no CreatedAtRoute)
+     *   2.1 - O nome do método não precisa coincidir com o nome da rota
+     */
+    [HttpGet("{id}", Name = "GetCreated")]
+    public IActionResult GetCreated(int id) // esse parâmetro, tem que ser exatamente
+    {
+      try
+      {
+        var piloto = _pilotoRepository.GetByID(id);
+        if (piloto == null)
+          return StatusCode(StatusCodes.Status404NotFound, "Não existe piloto cadastrado!");
+
+        piloto.Nome += "(Created v1)";
+
+
+        return StatusCode(StatusCodes.Status200OK, piloto);
+      }
+      catch (Exception ex)
+      {
+        // Alternativa 1
+        // retornando a mensagem de erro (analisar se pode enviar a mensagem, talvez tratá-la. Retornar uma genérica, por exemplo, "Entrar em contato com o suporte").
+        // além disso, "logar" a mensagem, para futuramente fezer uma analisa (nesse pode ser a mensagem na integra).
+        //return BadRequest(ex.ToString());
+
+        // Alternativa 2 (mais elegante)
+        return StatusCode(StatusCodes.Status500InternalServerError, "Erro. Entrar em contato com o suporte!!!");
+      }
     }
 
     [HttpPost]
     public IActionResult AddPiloto([FromBody]Piloto piloto)
     {
-      /* Leitura:
+      /* Exemplo 1:
        * Adiciono o piloto e retorno um ok, apenas.
        * Na parametrização: informo ao .NET Core que os dados do piloto, veem do "corpo" do HTML. No formato JSON.
        * 
        * Não é uma boa práica colocar a entidade direto aqui na requisição. O certo é utilizar o AutoMapper.
        */
-      _pilotoRepository.Adicionar(piloto);
-      return Ok();
+      //_pilotoRepository.Add(piloto);
+      //return Ok();
+
+      /* Exemplo 2: mais elaborado
+       */
+      try
+      {
+        if (_pilotoRepository.ExistByID(piloto.ID))
+          return StatusCode(StatusCodes.Status406NotAcceptable, "Já existe piloto com esse ID!");
+
+        _pilotoRepository.Add(piloto);
+        // Simplesmente retorno um Ok...
+        //return StatusCode(StatusCodes.Status201Created, "Piloto adicionado.");
+
+        // Mas posso utilizar um esquema para, além de informar que Ok(created), mostrar a "rota" onde está esse novo recurso. Tenho que criar a rota.
+        /* Leitura:
+         * Os parâmetros são:
+         * 1 - O nome da rota (o CreateAtRoute vai apontar para essa rota). Essa nova rota é um método aqui no controller mesmo, (HttpGet)
+         * 2 - Um objeto anônimo (com ID do piloto adicionado... essa propriedado do obejto anônimo, tem que ser exatamente o mesmo no método que oou criar)
+         * 3 - objeto do Piloto adicionado
+         */
+
+        piloto.Nome += "(Created v2)";
+
+        return CreatedAtRoute("GetCreated", new { id = piloto.ID }, piloto);
+      }
+      catch (Exception ex)
+      {
+        return StatusCode(StatusCodes.Status500InternalServerError, "Erro. Entrar em contato com o suporte!!!");
+      }
     }
 
     [HttpPut]
     public IActionResult UpdateFullPiloto([FromBody] Piloto piloto)
     {
-      return Ok();
+      try
+      {
+        if (!_pilotoRepository.ExistByID(piloto.ID))
+          return StatusCode(StatusCodes.Status404NotFound, "Piloto não encontrado.");
+
+        _pilotoRepository.UpdateFull(piloto);
+
+        return StatusCode(StatusCodes.Status204NoContent, "Atualização completa realizada com sucesso.");
+      }
+      catch (Exception)
+      {
+
+        return StatusCode(StatusCodes.Status500InternalServerError, "Erro. Entrar em contato com o suporte!!!");
+      }
     }
 
     [HttpPatch]
     public IActionResult UpdatePartialPiloto([FromBody] Piloto piloto)
     {
-      return Ok();
+      /* teste
+       */
+      try
+      {
+
+        return StatusCode(StatusCodes.Status200OK, "Atualização parcial realizada com sucesso.");
+      }
+      catch (Exception)
+      {
+
+        return StatusCode(StatusCodes.Status500InternalServerError, "Erro. Entrar em contato com o suporte!!!");
+      }
     }
 
     [HttpDelete("{ID}")]
-    public IActionResult UpdatePartialPiloto(int ID)
+    public IActionResult DeleteByID(int ID)
     {
-      return Ok();
+      try
+      {
+        /* O EF possui um mecanismo de cache, então pode ser que o piloto que está sendo manipulado,
+         * já esteja em memória, assim, posso fazer melhor:
+         */
+        // ANTES:
+        //if (!_pilotoRepository.ExistByID(ID))
+        //  return StatusCode(StatusCodes.Status404NotFound, "Piloto não encontrado.");
+        //DEPOIS:
+        Piloto piloto = _pilotoRepository.GetByID(ID);
+        if (piloto == null)
+          return StatusCode(StatusCodes.Status404NotFound, "Piloto não encontrado.");
+
+        _pilotoRepository.Delete(piloto);
+
+        return StatusCode(StatusCodes.Status204NoContent, "Exclusão realizada com sucesso.");
+      }
+      catch (Exception)
+      {
+
+        return StatusCode(StatusCodes.Status500InternalServerError, "Erro. Entrar em contato com o suporte!!!");
+      }
     }
   }
 }

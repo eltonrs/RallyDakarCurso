@@ -17,10 +17,16 @@ namespace RallyDakar.Domain.Repositories
       _rallyDakarDbContext = rallyDakarDbContext;
     }
 
-    public void Adicionar(Piloto piloto)
+    public void Add(Piloto piloto)
     {
       _rallyDakarDbContext.Pilotos.Add(piloto); // nesse ponto, o EF gera os scripts de banco de dados para inserir os dados.
       _rallyDakarDbContext.SaveChanges(); // replica os dados para a base de dados.
+    }
+
+    public void Delete(Piloto piloto)
+    {
+      _rallyDakarDbContext.Pilotos.Remove(piloto);
+      _rallyDakarDbContext.SaveChanges();
     }
 
     public IEnumerable<Piloto> GetAll()
@@ -36,12 +42,33 @@ namespace RallyDakar.Domain.Repositories
       //return _rallyDakarDbContext.Pilotos;
     }
 
-    public IEnumerable<Piloto> GetByID(int ID)
+    public Piloto GetByID(int pilotoID)
     {
       /* Leitura: o EF irá fazer uma consulta (SELECT) filtrando (WHERE) pela coluna ID.
        * Observação: Para o EF executar de fato o SELECT, precisa do ToList().
        */
-      return _rallyDakarDbContext.Pilotos.Where(p => p.ID == ID).ToList();
+      return _rallyDakarDbContext.Pilotos.FirstOrDefault(p => p.ID == pilotoID);
+    }
+
+    public void UpdateFull(Piloto piloto)
+    {
+      /* Essa instância não está "anexada" ao EF, isso impede que seja feita qlq operação com ela, então é feito o Attach */
+      _rallyDakarDbContext.Attach(piloto);
+      /* A partir do momento que a instância está no controle do EF, ela é marcada como modificada, ou seja
+       * todos as propriedades (campos) estão modificados (conteúdo modificado).
+       * Há como marcar somente os campos que de fato foram modificados. Melhor performance. */
+      _rallyDakarDbContext.Entry(piloto).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+      _rallyDakarDbContext.SaveChanges(); // vai gerar o script UPDATE com todas as colunas
+    }
+
+    public void UpdatePartial(Piloto piloto)
+    {
+      //throw new NotImplementedException();
+    }
+
+    bool IPilotoRepository.ExistByID(int pilotoID)
+    {
+      return _rallyDakarDbContext.Pilotos.Any(p => p.ID == pilotoID);
     }
   }
 }
