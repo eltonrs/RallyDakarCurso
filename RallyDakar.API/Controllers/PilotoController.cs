@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using RallyDakar.Domain.Entities;
 using RallyDakar.Domain.Interfaces;
@@ -116,7 +117,7 @@ namespace RallyDakar.API.Controllers
     }
 
     [HttpPost]
-    public IActionResult AddPiloto([FromBody]Piloto piloto)
+    public IActionResult AddPiloto([FromBody] Piloto piloto)
     {
       /* Exemplo 1:
        * Adiciono o piloto e retorno um ok, apenas.
@@ -175,15 +176,21 @@ namespace RallyDakar.API.Controllers
       }
     }
 
-    [HttpPatch]
-    public IActionResult UpdatePartialPiloto([FromBody] Piloto piloto)
+    [HttpPatch("{ID}")]
+    public IActionResult UpdatePartialPiloto(int ID, [FromBody] JsonPatchDocument<Piloto> patchPiloto)
     {
       /* teste
        */
       try
       {
+        if (!_pilotoRepository.ExistByID(ID))
+          return StatusCode(StatusCodes.Status404NotFound, "Piloto não encontrado.");
 
-        return StatusCode(StatusCodes.Status200OK, "Atualização parcial realizada com sucesso.");
+        var piloto = _pilotoRepository.GetByID(ID);
+        patchPiloto.ApplyTo(piloto);
+        _pilotoRepository.UpdatePartial(piloto);
+
+        return StatusCode(StatusCodes.Status204NoContent, "Atualização parcial realizada com sucesso.");
       }
       catch (Exception)
       {

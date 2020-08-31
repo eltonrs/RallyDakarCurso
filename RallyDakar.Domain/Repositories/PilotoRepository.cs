@@ -63,7 +63,7 @@ namespace RallyDakar.Domain.Repositories
 
     public void UpdatePartial(Piloto piloto)
     {
-      //throw new NotImplementedException();
+      UpdateFull(piloto);
     }
 
     bool IPilotoRepository.ExistByID(int pilotoID)
