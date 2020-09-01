@@ -24,8 +24,9 @@ namespace RallyDakar.Domain.Entities
     }
 
     // Comportamentos (métodos). Sem esses, as classes são chamadas de anêmicas.
+    // Os comportamentos estão fortemente ligados às regras de negócio.
 
-    private bool ValidarAdicionarEquipe(Equipe equipe)
+    private bool ValidarPodeAdicionarEquipe(Equipe equipe)
     {
       if (equipe == null) // deve ser sempre a primeira validação
         return false;
@@ -35,7 +36,7 @@ namespace RallyDakar.Domain.Entities
 
     public void AdicionarEquipe(Equipe equipe)
     {
-      if (ValidarAdicionarEquipe(equipe))
+      if (ValidarPodeAdicionarEquipe(equipe))
         Equipes.Add(equipe);
     }
 

@@ -10,7 +10,7 @@ namespace RallyDakar.API.Model
   public class PilotoModel
   {
     [Key]
-    public int ID { get; set; }
+    public int ID { get; set; } // na maioria das vezes não precisa do ID aqui no Model. Pq esse campo não é visível para o usuário
     [Required(ErrorMessage = "O nome do piloto é obrigatório.")]
     [MinLength(4, ErrorMessage = "O nome do piloto deve ter no mínimo 4 caracteres.")]
     [MaxLength(500, ErrorMessage = "O nome do piloto excedeu a quantidade de 500 caracteres.")]
