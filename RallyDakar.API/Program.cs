@@ -22,7 +22,9 @@ namespace RallyDakar.API
 
       try
       {
-        CreateHostBuilder(args).Build().Run();
+        CreateHostBuilder(args)
+          .Build()
+          .Run();
       }
       catch (Exception ex)
       {

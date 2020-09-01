@@ -7,21 +7,30 @@ using System.Text;
 
 namespace RallyDakar.Domain.DbContextDomain.DataLoad
 {
-  public class DataLoadTemporada
+  public class DataLoadEquipe
   {
     public static void LoadInitialData(IServiceProvider serviceProvider)
     {
       using (var context = new RallyDakarDbContext(serviceProvider.GetRequiredService<DbContextOptions<RallyDakarDbContext>>()))
       {
-        var temporada = new Temporada
+        var equipe = new Equipe
         {
           ID = 1,
-          Nome = "Temporada 2020",
-          DataInicio = DateTime.Now,
-          DataFim = null
+          CodigoIdentificador = "TMZ",
+          Nome = "The MotorZ",
+          TemporadaID = 1
         };
+        context.Equipes.Add(equipe);
 
-        context.Temporadas.Add(temporada);
+        equipe = new Equipe
+        {
+          ID = 2,
+          CodigoIdentificador = "XYZ",
+          Nome = "Abecedário",
+          TemporadaID = 1
+        };
+        context.Equipes.Add(equipe);
+
         context.SaveChanges();
       }
     }

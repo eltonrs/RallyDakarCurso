@@ -20,7 +20,8 @@ namespace RallyDakar.Domain.DbContextDomain.DataLoad
           ID = 1,
           Nome = "Elton",
           Sobrenome = "Souza",
-          NumeroUnico = 123
+          NumeroUnico = 123,
+          EquipeID = 1
         };
 
         // Adiconando no dataset (DbSet) de pilotos a entidade piloto.
@@ -31,7 +32,8 @@ namespace RallyDakar.Domain.DbContextDomain.DataLoad
           ID = 2,
           Nome = "Lívia",
           Sobrenome = "Souza",
-          NumeroUnico = 456
+          NumeroUnico = 456,
+          EquipeID = 1
         };
         context.Pilotos.Add(piloto);
 
@@ -40,7 +42,8 @@ namespace RallyDakar.Domain.DbContextDomain.DataLoad
           ID = 3,
           Nome = "Patrícia",
           Sobrenome = "Souza",
-          NumeroUnico = 789
+          NumeroUnico = 789,
+          EquipeID = 2
         };
         context.Pilotos.Add(piloto);
 
