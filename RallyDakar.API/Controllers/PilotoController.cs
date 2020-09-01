@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Extensions.Logging;
 using RallyDakar.API.Model;
 using RallyDakar.Domain.Entities;
 using RallyDakar.Domain.Interfaces;
@@ -18,6 +19,7 @@ namespace RallyDakar.API.Controllers
   {
     private readonly IPilotoRepository _pilotoRepository;
     private readonly IMapper _mapper;
+    private readonly ILogger<PilotoController> _logger;
 
     /* Leitura: O ASP.Net Core vai passar a instância do PilotoRepository.
      * Utilizando essa instância passada por parâmetro no construtor, eu a utilizo em qualquer método.
@@ -26,12 +28,14 @@ namespace RallyDakar.API.Controllers
      * 
      * Também passo o mapper por injeção de dependência
      */
-    public PilotoController(IPilotoRepository pilotoRepository, IMapper mapper)
+    public PilotoController(IPilotoRepository pilotoRepository, IMapper mapper, ILogger<PilotoController> logger)
     {
       // injetando a instância de PilotoRepository
       _pilotoRepository = pilotoRepository;
       // injetando a instância do Mapper
       _mapper = mapper;
+
+      _logger = logger;
     }
 
     /* Pensando no mundo real, o método abaixo é inviável, pois trás TODOS os dados da tabelas,
@@ -144,15 +148,28 @@ namespace RallyDakar.API.Controllers
        */
       try
       {
+        _logger.LogInformation("Mapeando piloto modelo.");
         /* Leitura:
          * Mapeando a classe "PilotoModel" (origem) para a classe "Piloto" (destino)
          */
         var piloto = _mapper.Map<Piloto>(pilotoModel);
 
+        _logger.LogInformation($"Verificando se existe piloto com ID { piloto.ID }.");
         if (_pilotoRepository.ExistByID(piloto.ID))
+        {
+          _logger.LogWarning($"Já existe um piloto com ID { piloto.ID }.");
           return StatusCode(StatusCodes.Status406NotAcceptable, "Já existe piloto com esse ID!");
+        }
 
+        // forçando um erro para ver o conteúdo do log com Exception
+        //int numero = int.Parse("B");
+
+        _logger.LogInformation("Adicionando piloto...");
+        _logger.LogInformation($"ID: { piloto.ID }.");
+        _logger.LogInformation($"Nome: { piloto.Nome }.");
+        _logger.LogInformation($"Sobrenome: { piloto.Sobrenome }.");
         _pilotoRepository.Add(piloto);
+        _logger.LogInformation("Piloto adicionado com sucesso.");
         // Simplesmente retorno um Ok...
         //return StatusCode(StatusCodes.Status201Created, "Piloto adicionado.");
 
@@ -165,14 +182,18 @@ namespace RallyDakar.API.Controllers
          */
 
         //piloto.Nome += "(Created v2)"; // testes
-
+        
+        _logger.LogInformation("Mapeando o retorno.");
         // Para não passar o objeto da instância da classe do repositório novamente, altero para a classe model...
         // return CreatedAtRoute("GetCreated", new { id = piloto.ID }, piloto);
         var pilotoModelResponse = _mapper.Map<PilotoModel>(piloto);
+
+        _logger.LogInformation("Chamando a rota 'GetCreated'.");
         return CreatedAtRoute("GetCreated", new { id = piloto.ID }, pilotoModelResponse);
       }
       catch (Exception ex)
       {
+        _logger.LogError(ex.ToString());
         return StatusCode(StatusCodes.Status500InternalServerError, "Erro. Entrar em contato com o suporte!!!");
       }
     }
