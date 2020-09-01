@@ -1,33 +1,43 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Internal;
+using RallyDakar.API.Model;
 using RallyDakar.Domain.Entities;
 using RallyDakar.Domain.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace RallyDakar.API.Controllers
 {
   [ApiController]
   //[Route("api/[controller]")]
-  [Route("api/pilotos")]
+  [Route("api/Pilotos")] // URI (identificação do recurso)
   public class PilotoController : ControllerBase
   {
-    IPilotoRepository _pilotoRepository;
+    private readonly IPilotoRepository _pilotoRepository;
+    private readonly IMapper _mapper;
 
     /* Leitura: O ASP.Net Core vai passar a instância do PilotoRepository.
      * Utilizando essa instância passada por parâmetro no construtor, eu a utilizo em qualquer método.
      * 
      * O mecanismo interno de injeção de dependência (lá no MapScope do Startup), fará a isso automaticamente.
+     * 
+     * Também passo o mapper por injeção de dependência
      */
-    public PilotoController(IPilotoRepository pilotoRepository)
+    public PilotoController(IPilotoRepository pilotoRepository, IMapper mapper)
     {
       // injetando a instância de PilotoRepository
       _pilotoRepository = pilotoRepository;
+      // injetando a instância do Mapper
+      _mapper = mapper;
     }
 
+    /* Pensando no mundo real, o método abaixo é inviável, pois trás TODOS os dados da tabelas,
+     * além de não ser performático, é perigoso.
+     * O ideal é não existir métodos assim (comentar ou até mesmo, exluir do fonte).
+     */
     [HttpGet]
     public IActionResult GetAll()
     {
@@ -99,10 +109,11 @@ namespace RallyDakar.API.Controllers
         if (piloto == null)
           return StatusCode(StatusCodes.Status404NotFound, "Não existe piloto cadastrado!");
 
-        piloto.Nome += "(Created v1)";
+        // piloto.Nome += "(Created v1)";
 
-
-        return StatusCode(StatusCodes.Status200OK, piloto);
+        var pilotoModel = _mapper.Map<PilotoModel>(piloto);
+        // Não devolver a entidade da classe de negócio
+        return StatusCode(StatusCodes.Status200OK, pilotoModel);
       }
       catch (Exception ex)
       {
@@ -117,7 +128,8 @@ namespace RallyDakar.API.Controllers
     }
 
     [HttpPost]
-    public IActionResult AddPiloto([FromBody] Piloto piloto)
+    //public IActionResult AddPiloto([FromBody] Piloto piloto) // Má prática: não expor a classe (lá do dominio) aqui no controller
+    public IActionResult AddPiloto([FromBody] PilotoModel pilotoModel)// Boa prática: usar Model. É uma forma de "esconder" e melhorar isso, é utilizando padrão de projeto MVC (no caso, o M).
     {
       /* Exemplo 1:
        * Adiciono o piloto e retorno um ok, apenas.
@@ -132,6 +144,11 @@ namespace RallyDakar.API.Controllers
        */
       try
       {
+        /* Leitura:
+         * Mapeando a classe "PilotoModel" (origem) para a classe "Piloto" (destino)
+         */
+        var piloto = _mapper.Map<Piloto>(pilotoModel);
+
         if (_pilotoRepository.ExistByID(piloto.ID))
           return StatusCode(StatusCodes.Status406NotAcceptable, "Já existe piloto com esse ID!");
 
@@ -147,9 +164,12 @@ namespace RallyDakar.API.Controllers
          * 3 - objeto do Piloto adicionado
          */
 
-        piloto.Nome += "(Created v2)";
+        //piloto.Nome += "(Created v2)"; // testes
 
-        return CreatedAtRoute("GetCreated", new { id = piloto.ID }, piloto);
+        // Para não passar o objeto da instância da classe do repositório novamente, altero para a classe model...
+        // return CreatedAtRoute("GetCreated", new { id = piloto.ID }, piloto);
+        var pilotoModelResponse = _mapper.Map<PilotoModel>(piloto);
+        return CreatedAtRoute("GetCreated", new { id = piloto.ID }, pilotoModelResponse);
       }
       catch (Exception ex)
       {
@@ -158,13 +178,14 @@ namespace RallyDakar.API.Controllers
     }
 
     [HttpPut]
-    public IActionResult UpdateFullPiloto([FromBody] Piloto piloto)
+    public IActionResult UpdateFullPiloto([FromBody] PilotoModel pilotoModel)
     {
       try
       {
-        if (!_pilotoRepository.ExistByID(piloto.ID))
+        if (!_pilotoRepository.ExistByID(pilotoModel.ID))
           return StatusCode(StatusCodes.Status404NotFound, "Piloto não encontrado.");
 
+        var piloto = _mapper.Map<Piloto>(pilotoModel);
         _pilotoRepository.UpdateFull(piloto);
 
         return StatusCode(StatusCodes.Status204NoContent, "Atualização completa realizada com sucesso.");
@@ -177,30 +198,41 @@ namespace RallyDakar.API.Controllers
     }
 
     [HttpPatch("{ID}")]
-    public IActionResult UpdatePartialPiloto(int ID, [FromBody] JsonPatchDocument<Piloto> patchPiloto)
+    public IActionResult UpdatePartialPiloto(int ID, [FromBody] JsonPatchDocument<PilotoModel> patchPilotoModel)
     {
-      /* teste
-       */
       try
       {
         if (!_pilotoRepository.ExistByID(ID))
           return StatusCode(StatusCodes.Status404NotFound, "Piloto não encontrado.");
 
+        /* Erro 1: relacionado ao erro da instância já monitorada (tracked):
+         * Foi nesse ponto que o EF gerou uma instância
+         */
         var piloto = _pilotoRepository.GetByID(ID);
-        patchPiloto.ApplyTo(piloto);
+
+        var pilotoModel = _mapper.Map<PilotoModel>(piloto);
+
+        patchPilotoModel.ApplyTo(pilotoModel);
+
+        /* Erro 1: o AutoMapper gera outra instância e essa que é passada para atualização, para corrigir
+         * basta:
+         */
+        //var pilotoAtualizado = _mapper.Map<Piloto>(pilotoModel);
+        piloto = _mapper.Map(pilotoModel, piloto); // dessa forma, o AutoMapper utiliza a mesma instância gerada anteriormente e que já está sendo monitorada.
+
         _pilotoRepository.UpdatePartial(piloto);
 
         return StatusCode(StatusCodes.Status204NoContent, "Atualização parcial realizada com sucesso.");
       }
-      catch (Exception)
+      catch (Exception ex)
       {
 
-        return StatusCode(StatusCodes.Status500InternalServerError, "Erro. Entrar em contato com o suporte!!!");
+        return StatusCode(StatusCodes.Status500InternalServerError, "Erro. Entrar em contato com o suporte!!! Mensagem: " + ex.Message);
       }
     }
 
     [HttpDelete("{ID}")]
-    public IActionResult DeleteByID(int ID)
+    public IActionResult DeleteByID(int ID) // não precisa utlizar o AutoMapper aqui, pois o parâmetro é apenas o ID e o objeto encontrado (classe do repositório) é passado para o método interno.
     {
       try
       {
@@ -224,6 +256,16 @@ namespace RallyDakar.API.Controllers
 
         return StatusCode(StatusCodes.Status500InternalServerError, "Erro. Entrar em contato com o suporte!!!");
       }
+    }
+    
+    /* Pensando em "ir" para o Nível 3 do HATEAOS, mas ainda não é de fato:
+    // */
+    [HttpOptions]
+    public IActionResult ListarOperacoesPermitidas()
+    {
+      // Isso mostra aos "consumidores da API", quais dos recursos habilitados. Os consumidores devem ser essa informação.
+      Response.Headers.Add("Allow", "GET, POST, PUT, DELETE, PATCH and OPTIONS");
+      return Ok();
     }
   }
 }

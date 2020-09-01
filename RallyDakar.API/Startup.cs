@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -59,6 +60,13 @@ namespace RallyDakar.API
        */
       //services.AddScoped<IPilotoRepository, PilotoRepository>();
       MapScopes(services);
+      /* Leitura:
+       * Ao iniciar a aplicação, serão inciados/configurados os serviços, dentre eles o AutoMapper.
+       * A configuração abaixo, indica que será utilizada a thread atual, pegando os Assemblies (classes compiladas).
+       * 
+       * Obs.: o próximo passo é injetar o mapper no controller.
+       */
+      services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -52,13 +52,25 @@ namespace RallyDakar.Domain.Repositories
 
     public void UpdateFull(Piloto piloto)
     {
-      /* Essa instância não está "anexada" ao EF, isso impede que seja feita qlq operação com ela, então é feito o Attach */
-      _rallyDakarDbContext.Attach(piloto);
-      /* A partir do momento que a instância está no controle do EF, ela é marcada como modificada, ou seja
-       * todos as propriedades (campos) estão modificados (conteúdo modificado).
-       * Há como marcar somente os campos que de fato foram modificados. Melhor performance. */
-      _rallyDakarDbContext.Entry(piloto).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-      _rallyDakarDbContext.SaveChanges(); // vai gerar o script UPDATE com todas as colunas
+      // Esse estado é quando no tratamento do PUT (UpdateFull)
+      if (_rallyDakarDbContext.Entry(piloto).State == Microsoft.EntityFrameworkCore.EntityState.Detached) // Detached = não anexado
+      {
+        /* Essa instância não está "anexada" ao EF, isso impede que seja feita qlq operação com ela, então é feito o Attach */
+        _rallyDakarDbContext.Attach(piloto);
+        /* A partir do momento que a instância está no controle/monitoração do EF, ela é marcada como modificada, ou seja
+         * todos as propriedades (campos) estão modificados (conteúdo modificado).
+         * Há como marcar somente os campos que de fato foram modificados. Melhor performance.
+         * 
+         * Eu forço o estado para modificado, pq como estava Detached é pq a instância "piloto" ainda não está sendo monitorada
+         */
+        _rallyDakarDbContext.Entry(piloto).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+      }
+      else // Simplesmente atualizo. UpdatePartial
+      {
+        _rallyDakarDbContext.Update(piloto);
+      }
+      
+      _rallyDakarDbContext.SaveChanges(); // vai gerar o script UPDATE com todas/algumas das colunas.
     }
 
     public void UpdatePartial(Piloto piloto)
