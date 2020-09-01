@@ -99,6 +99,32 @@ namespace RallyDakar.API.Controllers
       }
     }
 
+    /*
+    [HttpGet("{id}")]
+    public IActionResult GetById(int id)
+    {
+      try
+      {
+        _logger.LogInformation("Localizando piloto com ID: ", new { id });
+        var piloto = _pilotoRepository.GetByID(id);
+        if (piloto == null)
+        {
+          _logger.LogWarning("Piloto não encontrado.");
+          return StatusCode(StatusCodes.Status404NotFound, "Piloto não encontrado.");
+        }
+
+        _logger.LogWarning("Piloto encontrado.");
+        return StatusCode(StatusCodes.Status200OK, piloto);
+      }
+      catch (Exception ex)
+      {
+        _logger.LogError(ex.ToString());
+        return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao localizar piloto.");
+        
+      }
+    }
+    */
+
     /* Configurando a rota (para o Exemplo 2 do AddPiloto):
      * 1 - Adicionar o parâmetro que foi utilizado
      * 2 - Especificando o nome "personalizado" da rota (o mesmo passado no CreatedAtRoute)
@@ -109,6 +135,8 @@ namespace RallyDakar.API.Controllers
     {
       try
       {
+        _logger.LogInformation("Localizando piloto com ID: {id}", new[] { id });
+
         var piloto = _pilotoRepository.GetByID(id);
         if (piloto == null)
           return StatusCode(StatusCodes.Status404NotFound, "Não existe piloto cadastrado!");
