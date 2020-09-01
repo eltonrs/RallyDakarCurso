@@ -143,12 +143,17 @@ namespace RallyDakar.API.Controllers
 
         // piloto.Nome += "(Created v1)";
 
+        //_logger.LogInformation("Mapeando de {entidade} para {modelo}.", new[] { new { conteudo = "Piloto" }, new { conteudo = "PilotoModel" } });
+        _logger.LogInformation("Mapeando de {entidade} para {modelo}.", "Piloto", "PilotoModel");
+
         var pilotoModel = _mapper.Map<PilotoModel>(piloto);
         // Não devolver a entidade da classe de negócio
         return StatusCode(StatusCodes.Status200OK, pilotoModel);
       }
       catch (Exception ex)
       {
+        _logger.LogError(ex.ToString());
+
         // Alternativa 1
         // retornando a mensagem de erro (analisar se pode enviar a mensagem, talvez tratá-la. Retornar uma genérica, por exemplo, "Entrar em contato com o suporte").
         // além disso, "logar" a mensagem, para futuramente fezer uma analisa (nesse pode ser a mensagem na integra).
