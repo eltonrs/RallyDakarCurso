@@ -5,8 +5,9 @@ namespace RallyDakar.Domain.Entities
   public class Telemetria
   {
     public int ID { get; set; }
-    public int TemporadaID { get; set; }
-    public int PilotoID { get; set; }
+    //public int TemporadaID { get; set; }
+    //public int PilotoID { get; set; }
+    public int EquipeID { get; set; }
     public DateTime Data { get; set; }
     public TimeSpan Hora { get; set; }
     public DateTime DataServidor { get; set; }
