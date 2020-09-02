@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace RallyDakar.API.Model
 {
-  /* NÃO PODE TER regras de negócio */
+  /* NÃO PODE TER regras de negócio
+   * 
+   * SEMPRE que adicionar uma classe de modelo, adicionar no Profile do AutoMapper */
   public class PilotoModel
   {
     [Key]

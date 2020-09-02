@@ -38,6 +38,11 @@ namespace RallyDakar.Domain.Repositories
       return _dbContext.Telemetrias.ToList();
     }
 
+    public IEnumerable<Telemetria> GetAllByEquipe(int equipeId)
+    {
+      return _dbContext.Telemetrias.Where(t => t.EquipeID == equipeId).ToList();
+    }
+
     public Telemetria GetByID(int id)
     {
       return _dbContext.Telemetrias.FirstOrDefault(t => t.ID == id);

@@ -37,8 +37,13 @@ namespace RallyDakar.Domain.Repositories
 
     public IEnumerable<Piloto> GetAll()
     {
-      /* Leitura: o EF só faz a consulta no banco de dados, no caso, na tabela Pilotos, quando eu invoco algum método do objeto Pilotos (DbSet).
-       * Nesse caso, o "ToList()" faz um SELECT simples
+      /* Leitura / exemplo:
+       * _rallyDakarDbContext.Pilotos.Where(<expressão lambda>).ToList();
+       * 
+       * Separando o trecho acima:
+       * 
+       * _rallyDakarDbContext.Pilotos.Where(<expressão lambda>) : prepara a consulta (SQL)
+       * ToList() : conecta, realiza a consulta e fecha a conexão
        */
       return _rallyDakarDbContext.Pilotos.ToList();
       //return _rallyDakarDbContext.Pilotos.Where(p => p.ID == 1);
@@ -50,8 +55,7 @@ namespace RallyDakar.Domain.Repositories
 
     public Piloto GetByID(int pilotoID)
     {
-      /* Leitura: o EF irá fazer uma consulta (SELECT) filtrando (WHERE) pela coluna ID.
-       * Observação: Para o EF executar de fato o SELECT, precisa do ToList().
+      /* Leitura: o EF irá fazer uma consulta (SELECT) filtrando (WHERE, que é a espressão lambda) pela coluna ID.
        */
       return _rallyDakarDbContext.Pilotos.FirstOrDefault(p => p.ID == pilotoID);
     }

@@ -9,6 +9,7 @@ namespace RallyDakar.Domain.Interfaces
   {
     Telemetria GetByID(int id);
     IEnumerable<Telemetria> GetAll();
+    IEnumerable<Telemetria> GetAllByEquipe(int equipeId);
     void Add(Telemetria telemetria);
     void Update(Telemetria telemetria);
     void Delete(Telemetria telemetria);
