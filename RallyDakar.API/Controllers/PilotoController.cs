@@ -24,9 +24,9 @@ namespace RallyDakar.API.Controllers
     /* Leitura: O ASP.Net Core vai passar a instância do PilotoRepository.
      * Utilizando essa instância passada por parâmetro no construtor, eu a utilizo em qualquer método.
      * 
-     * O mecanismo interno de injeção de dependência (lá no MapScope do Startup), fará a isso automaticamente.
+     * O mecanismo interno de injeção de dependência (lá no MapScope do Startup), fará a isso automaticamente (desde que eu tenha informado o "de para" (classe interface x classe concreta)).
      * 
-     * Também passo o mapper por injeção de dependência
+     * Também passo o mapper por injeção de dependência.
      */
     public PilotoController(IPilotoRepository pilotoRepository, IMapper mapper, ILogger<PilotoController> logger)
     {
@@ -89,6 +89,8 @@ namespace RallyDakar.API.Controllers
       }
       catch (Exception ex)
       {
+        _logger.LogError(ex.ToString());
+
         // Alternativa 1
         // retornando a mensagem de erro (analisar se pode enviar a mensagem, talvez tratá-la. Retornar uma genérica, por exemplo, "Entrar em contato com o suporte").
         // além disso, "logar" a mensagem, para futuramente fezer uma analisa (nesse pode ser a mensagem na integra).

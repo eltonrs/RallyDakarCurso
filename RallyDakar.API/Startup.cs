@@ -26,9 +26,17 @@ namespace RallyDakar.API
 
     public IConfiguration Configuration { get; }
 
+    /* Leitura:
+     * Aqui onde indico os mapeamentos que o mecanismo de injeção de dependência vai se basear.
+     * 
+     * Faz com que a instância da classe concreta seja passada para os constructors, para o parâmetro instanciado da interface.
+     */
     private void MapScopes(IServiceCollection services)
     {
       services.AddScoped<IPilotoRepository, PilotoRepository>();
+      services.AddScoped<ITelemetriaRepository, TelemetriaRepository>();
+      services.AddScoped<IEquipeRepository, EquipeRepository>();
+      services.AddScoped<ITemporadaRepository, TemporadaRepository>();
     }
 
     // This method gets called by the runtime. Use this method to add services to the container.

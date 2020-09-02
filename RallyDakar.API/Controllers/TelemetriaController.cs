@@ -8,28 +8,42 @@ using System.Linq;
 using System.Threading.Tasks;
 using RallyDakar.Domain.Entities;
 using RallyDakar.Domain.Interfaces;
+using Microsoft.Extensions.Logging;
+using RallyDakar.API.Model;
 
 namespace RallyDakar.API.Controllers
 {
+  // vai ficar diferente, mais complexa (melhores) com relação à classe PilotoController
+
   [ApiController]
-  [Route("api/[controller]")] // vai ficar diferente, mais complexa
+  [Route("api/equipes/{equipeId}/telemetria")] // para acessar: http://<host:port>/equipes/<id da equipe>/telemetria
   public class TelemetriaController : ControllerBase
   {
     private readonly ITelemetriaRepository _telemetriaRepository;
-    private readonly RallyDakarDbContext _rallyDakarDbContext;
+    private readonly ILogger<TelemetriaController> _logger;
     private readonly IMapper _mapper;
 
-    public TelemetriaController(RallyDakarDbContext rallyDakarDbContext, IMapper mapper, ITelemetriaRepository telemetriaRepository)
+    public TelemetriaController(ITelemetriaRepository telemetriaRepository, IMapper mapper, ILogger<TelemetriaController> logger)
     {
-      _rallyDakarDbContext = rallyDakarDbContext;
-      _mapper = mapper;
       _telemetriaRepository = telemetriaRepository;
+      _mapper = mapper;
+      _logger = logger;
     }
 
-    [HttpGet("{id}")]
-    public IActionResult GetById(int id)
+    /* Melhoria com base no PilotoController
+     * O tipo de retorno do método não é mais uma interface e sim a classe concreta, porém, tipada com o modelo (mais fácil a "leitura")
+     * Dessa forma, ferramentas de documentação de APIs, conseguem identificar melhor os métodos.
+     */
+    [HttpGet]
+    public ActionResult<TelemetriaModel> GetById(int equipeId)
     {
-      if (id <= 0)
+      /* CUIDADO!!! o tipo do retorno não é validado, então se colocar, por exemplo, a classe concreta como retorno, irá passar pelo compilador. Exemplo:
+       */
+
+      //Telemetria telemetria = new Telemetria();
+      //return Ok(telemetria);
+      
+      if (equipeId <= 0)
         return StatusCode(StatusCodes.Status404NotFound, "ID não localizado.");
 
       return StatusCode(StatusCodes.Status200OK);
