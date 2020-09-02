@@ -14,7 +14,7 @@ namespace RallyDakar.Domain.DbContextDomain
     public DbSet<Equipe> Equipes { get; set; }
     // Leitura: DbSet tipado por Piloto
     public DbSet<Piloto> Pilotos { get; set; }
-    public DbSet<Telemetria> Telemetria { get; set; }
+    public DbSet<Telemetria> Telemetrias { get; set; }
 
     /* Lendo o construtor abaixo:
      * O construtor é obrigatório, senão o EntityFramework não funciona.

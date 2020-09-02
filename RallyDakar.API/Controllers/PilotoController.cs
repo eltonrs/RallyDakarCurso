@@ -211,7 +211,7 @@ namespace RallyDakar.API.Controllers
          * Os parâmetros são:
          * 1 - O nome da rota (o CreateAtRoute vai apontar para essa rota). Essa nova rota é um método aqui no controller mesmo, (HttpGet)
          * 2 - Um objeto anônimo (com ID do piloto adicionado... essa propriedado do obejto anônimo, tem que ser exatamente o mesmo no método que oou criar)
-         * 3 - objeto do Piloto adicionado
+         * 3 - Objeto do Piloto adicionado
          */
 
         //piloto.Nome += "(Created v2)"; // testes
