@@ -20,7 +20,13 @@ namespace RallyDakar.Domain.Repositories
     public void Add(Piloto piloto)
     {
       _rallyDakarDbContext.Pilotos.Add(piloto); // nesse ponto, o EF gera os scripts de banco de dados para inserir os dados.
-      _rallyDakarDbContext.SaveChanges(); // replica os dados para a base de dados.
+      _rallyDakarDbContext.SaveChanges(); // replica os dados para a base de dados. O "salvar" pode ser um método aqui dentro do repositório...
+    }
+
+    public void Salvar()
+    {
+      if (_rallyDakarDbContext.ChangeTracker.HasChanges())
+        _rallyDakarDbContext.SaveChanges();
     }
 
     public void Delete(Piloto piloto)

@@ -22,5 +22,7 @@ namespace RallyDakar.Domain.Entities
     public bool PedalAcelerador { get; set; }
     public bool PedalFreio { get; set; }
     public bool FarolAltoLigado { get; set; }
+
+
   }
 }
